@@ -8,6 +8,8 @@ class SensorReader{
     int calibrationHigh[5] = {4095, 4095, 4095, 4095, 4095};
     
     private:
+    int average = 0;
+
     int readRaw(int sensor){
         switch(sensor){
             case 0:
@@ -51,6 +53,19 @@ class SensorReader{
         int weights[5] = {-10,-5, 0, 5, 10};
         // Faz uma media com pesos de cada sensor
         int weightedAverage = (weights[0] * readSensor(0) + weights[1] * readSensor(1) + weights[2] * readSensor(2) + weights[3] * readSensor(3) + weights[4] * readSensor(4)); //(weights[0] + weights[1] + weights[2] + weights[3] + weights[4]); 
-        return weightedAverage;
+        average = average * 0.995f + weightedAverage * 0.005f;
+        return average;
+    }
+
+    int getBiggest(){
+        int biggestValue = 300;
+        int biggestId = -10;
+        for(int i = 0; i < 5; i++){
+            if(readSensor(i) > biggestValue){
+                biggestValue = readSensor(i);
+                biggestId = i;
+            }
+        }
+        return biggestId;
     }
 };
