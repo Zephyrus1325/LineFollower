@@ -1,14 +1,23 @@
 #pragma once
 #include "Arduino.h"
-#include "pin.h"
+#include "defines.h"
 
 
 class SensorReader{
-    int calibrationLow[5] = {0, 0, 0, 0, 0};
-    int calibrationHigh[5] = {4095, 4095, 4095, 4095, 4095};
+    int calibrationLow[7] = {0, 0, 0, 0, 0, 0, 0};
+    int calibrationHigh[7] = {4095, 4095, 4095, 4095, 4095, 4095, 4095};
     
     private:
     int average = 0;
+
+    int biggestSensor = 2;
+
+    void checkBiggest(int biggestID){
+        if(abs(biggestID - biggestSensor) <= 1){
+            biggestSensor = biggestID;
+        }
+    }
+
 
     int readRaw(int sensor){
         switch(sensor){
@@ -28,7 +37,9 @@ class SensorReader{
     }
 
     int readSensor(int sensor){
-        return map(readRaw(sensor), calibrationLow[sensor], calibrationHigh[sensor], 0, 4000);
+        int reading = readRaw(sensor);//map(readRaw(sensor), calibrationLow[sensor], calibrationHigh[sensor], 0, 4000);
+        
+        return reading; 
     }
 
 
@@ -43,6 +54,13 @@ class SensorReader{
         pinMode(PIN_SENSOR_R, INPUT);
         pinMode(PIN_SENSOR_RR, INPUT);
         digitalWrite(PIN_SENSOR_ENABLE, HIGH);
+        for(int i = 0; i < 5; i++){
+            calibrationLow[i] = readRaw(i);
+        }
+    }
+
+    void update(){
+        checkBiggest(getBiggestSensor());
     }
 
 
@@ -57,7 +75,7 @@ class SensorReader{
         return average;
     }
 
-    int getBiggest(){
+    int getBiggestSensor(){
         int biggestValue = 300;
         int biggestId = -10;
         for(int i = 0; i < 5; i++){
@@ -67,5 +85,16 @@ class SensorReader{
             }
         }
         return biggestId;
+    }
+    
+    int getActive(){
+        return biggestSensor;
+    }
+
+    void printRaw(){
+        for(int i = 0; i < 5; i++){
+            Serial.print(readSensor(i));
+            Serial.print(" | ");
+        }
     }
 };

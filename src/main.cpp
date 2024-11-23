@@ -2,18 +2,10 @@
 #include "util.h"
 #include "sensorReader.h"
 #include "motor.h"
+#include "webpage.h"
 SensorReader sensor;
 Motor leftMotor(PIN_MOTOR_LEFT_A, PIN_MOTOR_LEFT_B, PIN_MOTOR_LEFT_PWM);
 Motor rightMotor(PIN_MOTOR_RIGHT_A, PIN_MOTOR_RIGHT_B, PIN_MOTOR_RIGHT_PWM);
-
-int biggestSensor = 2;
-
-void checkBiggest(int biggestID){
-  if(abs(biggestID - biggestSensor) <= 1){
-    biggestSensor = biggestID;
-  }
-}
-
 
 void setup() {
     Serial.begin(115200);
@@ -23,6 +15,7 @@ void setup() {
 }
 
 void loop() {
+  sensor.update();
   int baseSpeed = 180;
   int speedOffset = 150;
   //readAll();
@@ -31,8 +24,8 @@ void loop() {
   //rightMotor.setSpeed(-sensor.getReading()+5000);
   int leftSpeed = 0;
   int rightSpeed = 0;
-  checkBiggest(sensor.getBiggest());
-  switch(biggestSensor){
+
+  switch(sensor.getActive()){
     case 0:
       leftSpeed = (-baseSpeed + speedOffset);
       rightSpeed = (baseSpeed + speedOffset);
@@ -54,12 +47,18 @@ void loop() {
       rightSpeed = (-baseSpeed + speedOffset);
       break;
   }
-  leftMotor.setSpeed(leftSpeed);
-  rightMotor.setSpeed(rightSpeed);
-  
-  Serial.print(biggestSensor);
-  Serial.print(" | ");
-  Serial.print(leftSpeed);
-  Serial.print(" | ");
-  Serial.println(rightSpeed);
+  //leftMotor.setSpeed(leftSpeed);
+  //rightMotor.setSpeed(rightSpeed);
+  leftMotor.setSpeed(255);
+  rightMotor.setSpeed(255);
+  sensor.printRaw();
+  Serial.println();
+  //Serial.print(sensor.getBiggestSensor());
+  //Serial.print(" | ");
+  //Serial.println(sensor.getActive());
+  //Serial.print(sensor.getActive());
+  //Serial.print(" | ");
+  //Serial.print(leftSpeed);
+  //Serial.print(" | ");
+  //Serial.println(rightSpeed);
 }

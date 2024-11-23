@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <pin.h>
+#include <defines.h>
 
 class Motor{
 
