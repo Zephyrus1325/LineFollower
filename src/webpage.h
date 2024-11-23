@@ -14,6 +14,7 @@ AsyncWebSocket ws("/ws");
 JsonDocument logDocument;
 
 
+
 enum dataType {
     LOG,
     ENABLE_CALIBRATION,
@@ -52,11 +53,28 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
             Serial.println(err.c_str());
             return;
         }
-
         const char *command = json["command"];
         if (strcmp(command, "setPID") == 0){
-            json["data"][0].toFlot;
+            const char *p = json["data"][0];
+            const char *i = json["data"][1];
+            const char *d = json["data"][2];
+            String kp = p;
+            String ki = i;
+            String kd = d;
+            motorPID.setKp(kp.toFloat());
+            motorPID.setKi(ki.toFloat());
+            motorPID.setKd(kd.toFloat());
         } else if (strcmp(command, "calibrate") == 0){
+            const char *motor = json["data"];
+            String motorSelected = motor;
+            if(motorSelected.toInt() == 0){
+                // Motor Esquerdo
+                testLeft = 2;
+            } else if(motorSelected.toInt() == 1){
+                // Motor Direito
+                testRight = 2;
+
+            }
         } else if (strcmp(command, "test") == 0){  
         } else if (strcmp(command, "setValue") == 0){  
         }

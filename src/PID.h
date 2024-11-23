@@ -17,8 +17,6 @@ class PID{
         public:
 
         void update(){
-            //Serial.print(output);
-            //Serial.print(" | ");
             if(!manualError){
                 error = setpoint - actualValue;
             }

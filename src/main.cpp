@@ -1,64 +1,35 @@
 #include <Arduino.h>
 #include "util.h"
-#include "sensorReader.h"
-#include "motor.h"
+#include "motorHandler.h"
 #include "webpage.h"
+
+
+
 SensorReader sensor;
-Motor leftMotor(PIN_MOTOR_LEFT_A, PIN_MOTOR_LEFT_B, PIN_MOTOR_LEFT_PWM);
-Motor rightMotor(PIN_MOTOR_RIGHT_A, PIN_MOTOR_RIGHT_B, PIN_MOTOR_RIGHT_PWM);
+bool isRacing = false;
 
 void setup() {
     Serial.begin(115200);
     sensor.begin();
     leftMotor.begin();
     rightMotor.begin();
+	//beginWebPage();
+	testLeft = 2;
+	testRight = 2;
 }
 
 void loop() {
-  sensor.update();
-  int baseSpeed = 180;
-  int speedOffset = 150;
-  //readAll();
-  //Serial.println(sensor.getReading());
-  //leftMotor.setSpeed(sensor.getReading()+5000);
-  //rightMotor.setSpeed(-sensor.getReading()+5000);
-  int leftSpeed = 0;
-  int rightSpeed = 0;
+    sensor.update(); // Atualiza Sensores
+	sensor.printRaw();
+	Serial.println();
+    //updateMotor(isRacing); // Faz umas checagens dos motores
+	//leftMotor.setSpeed(200);
+	//rightMotor.setSpeed(200);
+	//Serial.print(testLeft);
+	//Serial.print(" | ");
+	//Serial.println(testRight);
+    // Se estiver correndo, faz o pau torar
+	if(isRacing){
 
-  switch(sensor.getActive()){
-    case 0:
-      leftSpeed = (-baseSpeed + speedOffset);
-      rightSpeed = (baseSpeed + speedOffset);
-      break;
-    case 1:
-      leftSpeed = (speedOffset);
-      rightSpeed = (baseSpeed + speedOffset);
-      break;
-    case 2:
-      leftSpeed = (baseSpeed);
-      rightSpeed = (baseSpeed);
-      break;
-    case 3:
-      leftSpeed = (baseSpeed + speedOffset);
-      rightSpeed = (speedOffset);
-      break;
-    case 4:
-      leftSpeed = (baseSpeed + speedOffset);
-      rightSpeed = (-baseSpeed + speedOffset);
-      break;
-  }
-  //leftMotor.setSpeed(leftSpeed);
-  //rightMotor.setSpeed(rightSpeed);
-  leftMotor.setSpeed(255);
-  rightMotor.setSpeed(255);
-  sensor.printRaw();
-  Serial.println();
-  //Serial.print(sensor.getBiggestSensor());
-  //Serial.print(" | ");
-  //Serial.println(sensor.getActive());
-  //Serial.print(sensor.getActive());
-  //Serial.print(" | ");
-  //Serial.print(leftSpeed);
-  //Serial.print(" | ");
-  //Serial.println(rightSpeed);
+    }
 }

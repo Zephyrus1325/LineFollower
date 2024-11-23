@@ -4,8 +4,8 @@
 
 
 class SensorReader{
-    int calibrationLow[7] = {0, 0, 0, 0, 0, 0, 0};
-    int calibrationHigh[7] = {4095, 4095, 4095, 4095, 4095, 4095, 4095};
+    int calibrationLow[5] = {0, 0, 0, 0, 2810};
+    int calibrationHigh[5] = {4095, 4095, 4095, 4095, 4095 };
     
     private:
     int average = 0;
@@ -37,7 +37,7 @@ class SensorReader{
     }
 
     int readSensor(int sensor){
-        int reading = readRaw(sensor);//map(readRaw(sensor), calibrationLow[sensor], calibrationHigh[sensor], 0, 4000);
+        int reading = map(readRaw(sensor), calibrationLow[sensor], calibrationHigh[sensor], 0, 4000);
         
         return reading; 
     }
