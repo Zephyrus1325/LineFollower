@@ -124,4 +124,19 @@ class SensorReader{
             Serial.print(" | ");
         }
     }
+    
+    int findTorque(){
+        
+        int centroid = 0;
+        int sensorValue = 0;
+        int torque = 0;
+        int mass = 0;
+        for(int channel = 0; channel < totalSensors; channel++){
+            sensorValue = readSensor(channel);
+            mass += sensorValue;
+            torque += sensorValue*channel;
+        }
+        centroid = (torque * 10)/ mass;
+        return centroid;
+    } 
 };
