@@ -4,13 +4,28 @@
 
 
 class SensorReader{
-    int calibrationLow[5] = {0, 0, 0, 0, 2810};
+    int calibrationLow[5] = {0, 0, 0, 0, 0};
     int calibrationHigh[5] = {4095, 4095, 4095, 4095, 4095 };
     
     private:
     int average = 0;
 
     int biggestSensor = 2;
+    const int totalSensors = 5;
+
+
+
+    void calibrateSensors(){
+        for(int sensor = 0; sensor < totalSensors; sensor++){
+            int average = 0;
+            const int totalSamples = 1000; // Numero de amostras usadas para calcular o valor minimo
+            for(int i = 0; i < totalSamples; i++){
+                int reading = readRaw(sensor);
+                average += reading;
+            }
+            calibrationLow[sensor] = average/totalSamples;
+        }
+    }
 
     void checkBiggest(int biggestID){
         if(abs(biggestID - biggestSensor) <= 1){
@@ -37,8 +52,9 @@ class SensorReader{
     }
 
     int readSensor(int sensor){
-        int reading = map(readRaw(sensor), calibrationLow[sensor], calibrationHigh[sensor], 0, 4000);
-        
+        int maxValue = 2000;
+        int reading = map(readRaw(sensor), calibrationLow[sensor], calibrationHigh[sensor], 0, maxValue);
+        reading = constrain(reading, 0, maxValue);
         return reading; 
     }
 
@@ -47,6 +63,10 @@ class SensorReader{
     SensorReader(){}
 
     void begin(){
+        analogReadResolution(12);
+        analogSetWidth(12);
+        analogSetClockDiv(1);
+        analogSetAttenuation(ADC_11db);
         pinMode(PIN_SENSOR_ENABLE, OUTPUT);
         pinMode(PIN_SENSOR_LL, INPUT);
         pinMode(PIN_SENSOR_L, INPUT);
@@ -54,13 +74,13 @@ class SensorReader{
         pinMode(PIN_SENSOR_R, INPUT);
         pinMode(PIN_SENSOR_RR, INPUT);
         digitalWrite(PIN_SENSOR_ENABLE, HIGH);
-        for(int i = 0; i < 5; i++){
-            calibrationLow[i] = readRaw(i);
-        }
+        calibrateSensors();
     }
 
     void update(){
         checkBiggest(getBiggestSensor());
+        //Serial.print(biggestSensor);
+        //Serial.print(" | ");
     }
 
 
@@ -76,9 +96,9 @@ class SensorReader{
     }
 
     int getBiggestSensor(){
-        int biggestValue = 300;
+        int biggestValue = 200;
         int biggestId = -10;
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < totalSensors; i++){
             if(readSensor(i) > biggestValue){
                 biggestValue = readSensor(i);
                 biggestId = i;
@@ -92,7 +112,14 @@ class SensorReader{
     }
 
     void printRaw(){
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < totalSensors; i++){
+            Serial.print(readRaw(i));
+            Serial.print(" | ");
+        }
+    }
+
+    void printReading(){
+        for(int i = 0; i < totalSensors; i++){
             Serial.print(readSensor(i));
             Serial.print(" | ");
         }

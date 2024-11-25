@@ -10,8 +10,8 @@ Motor leftMotor(PIN_MOTOR_LEFT_A, PIN_MOTOR_LEFT_B, PIN_MOTOR_LEFT_PWM);
 Motor rightMotor(PIN_MOTOR_RIGHT_A, PIN_MOTOR_RIGHT_B, PIN_MOTOR_RIGHT_PWM);
 
 
-timer leftCalibrationTimer{0,2000,true,true,true};
-timer rightCalibrationTimer{0,2000,true,true,true};
+timer leftCalibrationTimer{0,5000,true,true,true};
+timer rightCalibrationTimer{0,5000,true,true,true};
 int testLeft = 0;
 int testRight = 0;
 
@@ -54,6 +54,7 @@ void updateMotor(bool isRacing){
         rightMotor.setSpeed(0);
     } else {
         // Se estiver em uma corrida, deixa o pau torar
+
     }
 }
 

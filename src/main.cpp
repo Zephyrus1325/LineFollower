@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "util.h"
 #include "motorHandler.h"
-#include "webpage.h"
+//#include "webpage.h"
 
 
 
@@ -21,15 +21,15 @@ void setup() {
 void loop() {
     sensor.update(); // Atualiza Sensores
 	sensor.printRaw();
-	Serial.println();
+	Serial.println("");
+	//sensor.printReading();
+	//Serial.println();
     //updateMotor(isRacing); // Faz umas checagens dos motores
-	//leftMotor.setSpeed(200);
-	//rightMotor.setSpeed(200);
 	//Serial.print(testLeft);
 	//Serial.print(" | ");
 	//Serial.println(testRight);
     // Se estiver correndo, faz o pau torar
 	if(isRacing){
-
+		
     }
 }
