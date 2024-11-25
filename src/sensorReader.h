@@ -131,8 +131,8 @@ class SensorReader{
         int sensorValue = 0;
         int torque = 0;
         int mass = 0;
-        for(int channel = 0; channel < totalSensors; channel++){
-            sensorValue = readSensor(channel);
+        for(int channel = 1; channel < totalSensors+1; channel++){
+            sensorValue = readSensor(channel-1);
             mass += sensorValue;
             torque += sensorValue*channel;
         }
