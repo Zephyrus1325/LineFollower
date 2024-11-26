@@ -5,26 +5,23 @@
 
 
 
-SensorReader sensor;
-bool isRacing = false;
+
+bool isRacing = true;
 
 void setup() {
     Serial.begin(115200);
-    sensor.begin();
-    leftMotor.begin();
-    rightMotor.begin();
+	beginHandler();
 	//beginWebPage();
-	testLeft = 2;
-	testRight = 2;
 }
 
 void loop() {
-    sensor.update(); // Atualiza Sensores
-	sensor.printRaw();
-	Serial.println("");
+    
+	//sensor.printRaw();
+	//Serial.println("");
 	//sensor.printReading();
 	//Serial.println();
-    //updateMotor(isRacing); // Faz umas checagens dos motores
+    updateMotor(isRacing); // Faz umas checagens dos motores
+	
 	//Serial.print(testLeft);
 	//Serial.print(" | ");
 	//Serial.println(testRight);

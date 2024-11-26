@@ -3,15 +3,15 @@
 #include "defines.h"
 
 
-class SensorReader{
-    int calibrationLow[5] = {0, 0, 0, 0, 0};
-    int calibrationHigh[5] = {4095, 4095, 4095, 4095, 4095 };
-    
+class SensorReader{  
     private:
+    int calibrationLow[7] = {0, 0, 0, 0, 0, 0, 0};
+    int calibrationHigh[7] = {4095, 4095, 4095, 4095, 4095, 4095, 4095 };
+    
     int average = 0;
 
-    int biggestSensor = 2;
-    const int totalSensors = 5;
+    int biggestSensor = 3;
+    const int totalSensors = 7;
 
 
 
@@ -37,15 +37,19 @@ class SensorReader{
     int readRaw(int sensor){
         switch(sensor){
             case 0:
-                return analogRead(PIN_SENSOR_LL);    
+                return analogRead(PIN_SENSOR_LLL);    
             case 1:
-                return analogRead(PIN_SENSOR_L); 
+                return analogRead(PIN_SENSOR_LL); 
             case 2:
-                return analogRead(PIN_SENSOR_C); 
+                return analogRead(PIN_SENSOR_L); 
             case 3:
-                return analogRead(PIN_SENSOR_R); 
+                return analogRead(PIN_SENSOR_C); 
             case 4:
+                return analogRead(PIN_SENSOR_R); 
+            case 5:
                 return analogRead(PIN_SENSOR_RR); 
+            case 6:
+                return analogRead(PIN_SENSOR_RRR); 
             default:
                 return -1;   
         }
@@ -68,11 +72,13 @@ class SensorReader{
         analogSetClockDiv(1);
         analogSetAttenuation(ADC_11db);
         pinMode(PIN_SENSOR_ENABLE, OUTPUT);
+        pinMode(PIN_SENSOR_LLL, INPUT);
         pinMode(PIN_SENSOR_LL, INPUT);
         pinMode(PIN_SENSOR_L, INPUT);
         pinMode(PIN_SENSOR_C, INPUT);
         pinMode(PIN_SENSOR_R, INPUT);
         pinMode(PIN_SENSOR_RR, INPUT);
+        pinMode(PIN_SENSOR_RRR, INPUT);
         digitalWrite(PIN_SENSOR_ENABLE, HIGH);
         calibrateSensors();
     }
@@ -124,19 +130,26 @@ class SensorReader{
             Serial.print(" | ");
         }
     }
+
+    int getBiggest(){
+        return biggestSensor;
+    }
     
-    int findTorque(){
-        
+    int findCentroid(){
+        const int multiplier = 1000;
         int centroid = 0;
-        int sensorValue = 0;
         int torque = 0;
-        int mass = 0;
-        for(int channel = 0; channel < totalSensors; channel++){
-            sensorValue = readSensor(channel);
+        int mass = 1;
+        for(int channel = 1; channel < totalSensors+1; channel++){
+            int sensorValue = readSensor(channel-1);
             mass += sensorValue;
             torque += sensorValue*channel;
         }
-        centroid = (torque * 10)/ mass;
+        centroid = (torque * multiplier)/ mass;
+        // Se o sensor estiver fora da linha       
+        if(getBiggestSensor() < 0){
+            centroid = (biggestSensor + 1) * multiplier;
+        }
         return centroid;
     } 
 };

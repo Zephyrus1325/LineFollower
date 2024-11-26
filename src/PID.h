@@ -55,6 +55,10 @@ class PID{
             return kd;
         }
 
+        float getError(){
+            return error;
+        }
+
         void resetIntegral(){
             integral = 0;
         }
