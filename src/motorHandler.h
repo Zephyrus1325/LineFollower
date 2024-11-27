@@ -13,6 +13,8 @@ SensorReader sensor;
 
 timer leftCalibrationTimer{0,2000,true,true,true};
 timer rightCalibrationTimer{0,2000,true,true,true};
+timer PIDtimer{0,5,true,true,true};
+timer printTimer{0,20,true,true,true};
 int testLeft = 0;
 int testRight = 0;
 
@@ -20,18 +22,23 @@ void beginHandler(){
     sensor.begin();
     leftMotor.begin();
     rightMotor.begin();
+    //motorPID.setKp(0.025f);
     motorPID.setKp(0.02f);
-    motorPID.setKd(0.00f);
+    motorPID.setKd(0.0f);
+    motorPID.setKd(0.0f);
     motorPID.setSetpoint(4000);
 }
 
 void setMotorSpeed(int forward, int turnage){
-    leftMotor.setSpeed(forward - turnage);
+    leftMotor.setSpeed((forward - turnage) * 1);
     rightMotor.setSpeed(forward + turnage);
 }
 
 void updateMotor(bool isRacing){
     // Atualizar PID
+    if(PIDtimer.CheckTime()){
+        
+    }
     motorPID.update();
     sensor.update(); // Atualiza Sensores
     // Se não estiver em uma corrida, checar se há uma calibração ativa
@@ -74,24 +81,22 @@ void updateMotor(bool isRacing){
         rightMotor.setSpeed(0);
     } else {
         // Se estiver em uma corrida, deixa o pau torar
+        float power = 1.07f;
         motorPID.setActualValue(sensor.findCentroid());
-        int forward = 50;//70 - abs(motorPID.getOutput()/3);
-        int rotation = motorPID.getOutput();
-        //sensor.printRaw();
-        //Serial.print(" | ");
-        Serial.print(motorPID.getError());
-        Serial.print(" | ");
-        Serial.print(motorPID.getOutput());
-        Serial.print(" | ");
-        Serial.print(sensor.getBiggest());
-        Serial.print(" | ");
-        Serial.print(sensor.getBiggestSensor());
-        Serial.print(" | ");
-        Serial.print(sensor.findCentroid());
-        Serial.print(" | | ");
-        Serial.print(forward - rotation);
-        Serial.print(" | ");
-        Serial.println(forward + rotation);
+        //int forward = 70 - pow(1.06, abs(motorPID.getOutput()));
+        int forward = 50;
+        int rotation = (pow(power, abs(motorPID.getOutput())) - 1) * motorPID.getOutput()/(abs(motorPID.getOutput())+0.1) ;
+
+        if(printTimer.CheckTime()){
+            Serial.print(motorPID.getError());
+            Serial.print(" | ");
+            Serial.print(motorPID.getOutput());
+            Serial.print(" | ");
+            Serial.print(forward - rotation);
+            Serial.print(" | ");
+            Serial.println(forward + rotation);
+        }
+        
         setMotorSpeed(forward, rotation);
     }
 }

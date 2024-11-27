@@ -3,7 +3,7 @@
 
 class PID{
         private:
-        float kp = 1;
+        float kp = 0;
         float ki = 0;
         float kd = 0;
         float integral = 0;
@@ -26,9 +26,22 @@ class PID{
             float integralout =  ki * integral;
             float derivative =  kd * PIDderivative;
             
+            //Serial.print(proportional);
+            //Serial.print(" | ");
+            //Serial.print(integralout);
+            //Serial.print(" | ");
+            //Serial.print(derivative);
+            //Serial.print(" | ");
+            //Serial.print(error);
+            //Serial.print(" | ");
+            //Serial.print(integral);
+            //Serial.print(" | ");
+            //Serial.println(PIDderivative);
+
             output = proportional + integralout + derivative;
             
             lastUpdateTime = millis();
+            lastValue = actualValue;
         }
 
         float getOutput(){
