@@ -28,9 +28,13 @@ class SensorReader{
     }
 
     void checkBiggest(int biggestID){
-        if(abs(biggestID - biggestSensor) <= 1){
+        //if(abs(biggestID - biggestSensor) <= 1){
+        //    biggestSensor = biggestID;
+        //}
+        if(biggestID != -10){
             biggestSensor = biggestID;
         }
+        
     }
 
 
@@ -101,15 +105,31 @@ class SensorReader{
         return average;
     }
 
+
+    // Retorna o maior sensor lido no momento
+    // Retorno de -10 quer dizer que nenhum sensor está sendo relevamentemente grande
     int getBiggestSensor(){
         int biggestValue = 200;
         int biggestId = -10;
+        int average = 0;
         for(int i = 0; i < totalSensors; i++){
+            Serial.print(readSensor(i));
+            Serial.print(" | ");
+            
             if(readSensor(i) > biggestValue){
                 biggestValue = readSensor(i);
                 biggestId = i;
             }
+            //if(readSensor(i) == 2000){
+            //    average += i;
+            //}
         }
+        //if(biggestValue == 2000){
+        //    biggestId = average / totalSensors;
+        //}
+        //Serial.print(average);
+        //Serial.print(" | ");
+        //Serial.println(biggestId);
         return biggestId;
     }
     
@@ -131,8 +151,18 @@ class SensorReader{
         }
     }
 
+    // Retorna o ultimo sensor com o maior pico
     int getBiggest(){
         return biggestSensor;
+    }
+
+    int getGlobalAverage(){
+        int average = 0;
+        for(int i = 0; i < totalSensors; i++){
+            average += readSensor(i);
+        }
+        average /= totalSensors;
+        return average;
     }
     
     int findCentroid(){
@@ -149,6 +179,7 @@ class SensorReader{
         // Se o sensor estiver fora da linha       
         if(getBiggestSensor() < 0){
             centroid = (biggestSensor + 1) * multiplier;
+            //centroid = biggestSensor < 3 ? multiplier : biggestSensor > 3 ? 7 * multiplier : biggestSensor;
         }
         return centroid;
     } 
