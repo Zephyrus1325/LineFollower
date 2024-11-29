@@ -1,8 +1,5 @@
 #pragma once
 
-const char* ssid = "SeguidorMaker";
-const char* password = "deumaoito";
-
 #define PIN_SENSOR_ENABLE 14
 
 #define PIN_SENSOR_LLL 27

@@ -113,8 +113,6 @@ class SensorReader{
         int biggestId = -10;
         int average = 0;
         for(int i = 0; i < totalSensors; i++){
-            Serial.print(readSensor(i));
-            Serial.print(" | ");
             
             if(readSensor(i) > biggestValue){
                 biggestValue = readSensor(i);

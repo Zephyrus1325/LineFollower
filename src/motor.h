@@ -29,7 +29,6 @@ class Motor{
             digitalWrite(pin_a, HIGH);
             digitalWrite(pin_b, LOW);
         }
-        //digitalWrite(pin_pwm, HIGH);
         analogWrite(pin_pwm, constrain(abs(speed),0,255));
     }
 };
